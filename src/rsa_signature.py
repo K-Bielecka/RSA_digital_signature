@@ -1,8 +1,9 @@
 from math import gcd
 from hashlib import sha512
+from random import randrange
 
 
-def is_prime(n, k):
+def is_prime(n: int, k: int) -> bool:
     """
     The function implements the Miller-Rabin primality test.
 
@@ -12,7 +13,36 @@ def is_prime(n, k):
 
     Output: a boolean value
     """
-    pass
+
+    # trivial cases: 0-2 and even numbers
+    if n == 2:
+        return True
+    elif n <= 1 or n % 2 == 0:
+        return False
+
+    # writing n as 2^r * d + 1 with d odd
+    r = 0
+    d = n - 1
+    while d % 2 == 0:
+        d //= 2
+        r += 1
+
+    # perform k number of tests
+    for _ in range(k):
+        a = randrange(2, n - 2)
+        x = pow(a, d, n)
+
+        if x == 1 or x == n - 1:
+            continue
+
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                break
+        else:
+            return False
+
+    return True
 
 
 def generate_prime_number():
@@ -21,7 +51,14 @@ def generate_prime_number():
 
     Output: p - a large prime number.
     """
-    pass
+
+    p = 0
+    
+    # choose randomly a large number until prime is obtained
+    while not is_prime(p, 180):
+        p = randrange(1000, 3000)
+
+    return p
 
 
 def extended_euclides(a, b):
@@ -74,3 +111,5 @@ def verify(n, e, s):
 
     """
     pass
+
+print(generate_prime_number())
