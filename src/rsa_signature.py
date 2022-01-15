@@ -56,7 +56,7 @@ def generate_prime_number() -> int:
 
     # choose randomly a large number until prime is obtained
     while not is_prime(p, 180):
-        p = randrange(1000, 3000)
+        p = randrange(10000, 20000)
 
     return p
 
@@ -93,7 +93,25 @@ def generate_keys():
     Output: (n, e) - public key
                  d - private key.
     """
-    pass
+
+    # generate two large random primes
+    p = generate_prime_number()
+    q = generate_prime_number()
+
+    n = p * q
+    fi = (p - 1) * (q - 1)
+
+    # find such e, that e and fi are coprimes
+    e = 0
+    while gcd(e, fi) != 1:
+        e = randrange(1 + 1, fi - 1)
+
+    # find modular multiplicative inverse
+    _, x, _ = extended_euclidean(e, fi)
+    d = x + fi
+
+    # return public and private keys
+    return ((n, e), d)
 
 
 def generate_signature(m, d):
