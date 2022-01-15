@@ -2,7 +2,6 @@ from math import gcd
 from hashlib import sha512
 from random import randrange
 
-
 def is_prime(n: int, k: int) -> bool:
     """
     The function implements the Miller-Rabin primality test.
@@ -114,22 +113,28 @@ def generate_keys():
     return ((n, e), d)
 
 
-def generate_signature(m, d):
+def generate_signature(m, n, e, d):
     """
     The function generates an RSA digital signature.
 
     Input:
     m - message
+    n, e - public key of sender
     d - private key of sender
 
     Output:
     a digital signature s
 
     """
-    pass
+    # compute hash of message
+    h = int(sha512( m.encode("utf-8") ).hexdigest(), 16)%10**8  # should we have more or less than 8 digits???
+   
+    # compute signature and return it 
+    s = (pow(h,d))%n
+    return s
 
 
-def verify(n, e, s):
+def verify(m, n, e, s):
     """
     The function generates verifies the received signature using public key.
 
@@ -141,4 +146,11 @@ def verify(n, e, s):
     a boolean value
 
     """
-    pass
+    # decrypt the message
+    m_ = (pow(s,e))%n
+
+    # calculate message hash
+    h = int(sha512( m.encode("utf-8") ).hexdigest(), 16)%10**8
+
+    # compare and return
+    return m_ == h
