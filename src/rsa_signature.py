@@ -1,6 +1,7 @@
 from math import gcd
 from hashlib import sha512
-from random import randrange
+from random import randrange, getrandbits
+
 
 def is_prime(n: int, k: int) -> bool:
     """
@@ -55,7 +56,7 @@ def generate_prime_number() -> int:
 
     # choose randomly a large number until prime is obtained
     while not is_prime(p, 180):
-        p = randrange(10000, 20000)
+        p = getrandbits(1024)
 
     return p
 
@@ -113,7 +114,7 @@ def generate_keys():
     return ((n, e), d)
 
 
-def generate_signature(m, n, e, d):
+def generate_signature(m: int, n: int, e: int, d: int) -> int:
     """
     The function generates an RSA digital signature.
 
@@ -127,14 +128,14 @@ def generate_signature(m, n, e, d):
 
     """
     # compute hash of message
-    h = int(sha512( m.encode("utf-8") ).hexdigest(), 16)%10**8  # should we have more or less than 8 digits???
-   
-    # compute signature and return it 
-    s = (pow(h,d))%n
+    h = int(sha512(m.encode("utf-8")).hexdigest(), 16) % 10 ** 8
+
+    # compute signature and return it
+    s = pow(h, d, n)
     return s
 
 
-def verify(m, n, e, s):
+def verify(m: int, n: int, e: int, s: int) -> bool:
     """
     The function generates verifies the received signature using public key.
 
@@ -147,10 +148,10 @@ def verify(m, n, e, s):
 
     """
     # decrypt the message
-    m_ = (pow(s,e))%n
+    m_ = pow(s, e, n)
 
     # calculate message hash
-    h = int(sha512( m.encode("utf-8") ).hexdigest(), 16)%10**8
+    h = int(sha512(m.encode("utf-8")).hexdigest(), 16) % 10 ** 8
 
     # compare and return
     return m_ == h
