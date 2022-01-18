@@ -1,7 +1,4 @@
-
-
 from rsa_signature import generate_keys, generate_signature, verify
-
 
 option1 = "generate keys"
 option2 = "generate signature for input message"
@@ -9,7 +6,6 @@ option3 = "generate signature for message from given file"
 option4 = "verify signature from given file"
 welcome_text = "Welcome to our simple RSA signature app. You can choose one of the below options: \n"
 option_list = "1." + option1 + "\n" + "2." + option2 + "\n" + "3." + option3 + "\n" + "4." + option4 + "\n"
-
 
 def user_generate_keys_to_file():
     public_key_path = input("Please provide path for public key file \n")
@@ -40,11 +36,6 @@ def user_generate_signature_to_file(m, n, e, d):
         #print not_valid message
         print("Failed to generate a valid signature. \n")
    
-
-
-def user_verify_signature_from_file():
-    pass
-
 def user_input_switch(key: int):
     match key:
         case 1:
@@ -62,19 +53,44 @@ def user_input_switch(key: int):
             user_generate_signature_to_file(message,n,e,d)
         case 3:
             #generate signature for message from given file
-            print("You chose option: " + option3)    
+            print("You chose option: " + option3)  
+            #get file with message path
+            message_path = input("Please provide path to the file with the message, that you want to sign \n")
+            #read message  
+            with open(str(message_path),'r') as reader:
+               message = reader.read()
+            #generate keys and signature to files
+            ((n,e),d) = user_generate_keys_to_file()
+            user_generate_signature_to_file(message,n,e,d)
         case 4:
             #verify signature from given file
-            print("You chose option: " + option4)       
+            print("You chose option: " + option4)
+             #get file with message path
+            signature_path = input("Please provide path to the file with the signature, that you want to verify \n")
+            message_path = input("Please provide path to the file with message signed with your signature \n")
+            public_key_path = input("Please provide path to your public key\n")
+            #read message  
+            with open(str(signature_path),'r') as reader:
+               signature = reader.read()
+            with open(str(message_path),'r') as reader:
+               message = reader.read()
+            with open(str(public_key_path),'r') as reader:
+               file_contents = reader.read()
+            (n,e) = file_contents.split(',')
+            #verify signature and return result info
+            is_valid = verify(message,int(n),int(e),int(signature))
+            if(is_valid):
+                print("Provided signature is valid. \n")
+            else:
+                print("Provided signature is invalid.\n")
+                
         case _:
             print("Please choose a valid option 1-4")
-
 
 print(welcome_text, option_list)
 user_option_input = int(input("Type 1, 2, 3 or 4 to choose the option and press 'Enter'. \n"))
 
 user_input_switch(user_option_input)
-
 
 #Think about implementing the option to "escape" the certain option if for example somoene made a mistake. Should be done possibly with event listener, catch the 
 #  key press event and exit if it is the 'Escape' key
