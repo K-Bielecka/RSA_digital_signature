@@ -1,6 +1,6 @@
 
 
-from rsa_signature import generate_keys
+from rsa_signature import generate_keys, generate_signature, verify
 
 
 option1 = "generate keys"
@@ -8,16 +8,39 @@ option2 = "generate signature for input message"
 option3 = "generate signature for message from given file"
 option4 = "verify signature from given file"
 welcome_text = "Welcome to our simple RSA signature app. You can choose one of the below options: \n"
-option_list = str("1.", option1, "\n", "2.", option2, "\n","3.", option3, "\n","4.", option4, "\n")
+option_list = "1." + option1 + "\n" + "2." + option2 + "\n" + "3." + option3 + "\n" + "4." + option4 + "\n"
 
-def user_generate_keys():
-    pass
 
-def user_generate_signature_for_input_message():
-    pass
+def user_generate_keys_to_file():
+    public_key_path = input("Please provide path for public key file \n")
+    private_key_path = input("Please provide path for private key file \n")
 
-def user_generate_signature_for_file_message():
-    pass
+    ((n,e),d) = generate_keys()
+
+    print("generated public key: \n", n, ",", e)
+    with open(str(public_key_path),'w') as writer:
+        writer.write(str(n) + ',' + str(e))
+
+    print("generated private key: \n", d)
+    with open(str(private_key_path),'w') as writer:
+        writer.write(str(d)) 
+
+    return ((n,e),d)
+
+def user_generate_signature_to_file(m, n, e, d):
+    signature_path = input("Please provide path for signature file \n")
+    s = generate_signature(m,n,e,d)
+    is_valid = verify(m,n,e,s)
+    if(is_valid):
+        #save signature to file
+        print("generated signature: \n", s)
+        with open(str(signature_path),'w') as writer:
+            writer.write(str(s))
+    else:
+        #print not_valid message
+        print("Failed to generate a valid signature. \n")
+   
+
 
 def user_verify_signature_from_file():
     pass
@@ -27,21 +50,16 @@ def user_input_switch(key: int):
         case 1:
             #generate keys option
             print("You chose option: " + option1)  
-            public_key_path = input("Please provide path for public key file \n")
-            private_key_path = input("Please provide path for private key file \n")
-
-            ((n,e),d) = generate_keys()
-
-            print("generated public key: \n", n, ",", e)
-            with open(str(public_key_path),'w') as writer:
-                writer.write(str(n) + ',' + str(e))
-
-            print("generated private key: \n", d)
-            with open(str(private_key_path),'w') as writer:
-                writer.write(str(d))    
+            user_generate_keys_to_file() 
         case 2:
             #generate signature for input message
             print("You chose option: " + option2)
+            #get message
+            message = input("Please type the message to be signed \n")
+            # generate keys
+            ((n,e),d) = user_generate_keys_to_file()
+            #generate signature and save to file
+            user_generate_signature_to_file(message,n,e,d)
         case 3:
             #generate signature for message from given file
             print("You chose option: " + option3)    
