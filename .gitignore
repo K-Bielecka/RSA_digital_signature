@@ -130,3 +130,7 @@ dmypy.json
 
 # Visual Studio Code configs
 .vscode/
+
+# LaTeX auxiliary file
+*.synctex.gz 
+
