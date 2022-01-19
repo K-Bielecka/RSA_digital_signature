@@ -7,7 +7,7 @@ option4 = "verify signature from given file"
 welcome_text = "Welcome to our simple RSA signature app. You can choose one of the below options: \n"
 option_list = "1." + option1 + "\n" + "2." + option2 + "\n" + "3." + option3 + "\n" + "4." + option4 + "\n"
 
-def user_generate_keys_to_file():
+def generate_keys_to_file():
     public_key_path = input("Please provide path for public key file \n")
     private_key_path = input("Please provide path for private key file \n")
 
@@ -23,7 +23,7 @@ def user_generate_keys_to_file():
 
     return ((n,e),d)
 
-def user_generate_signature_to_file(m, n, e, d):
+def generate_signature_to_file(m, n, e, d):
     signature_path = input("Please provide path for signature file \n")
     s = generate_signature(m,n,e,d)
     is_valid = verify(m,n,e,s)
@@ -35,6 +35,19 @@ def user_generate_signature_to_file(m, n, e, d):
     else:
         #print not_valid message
         print("Failed to generate a valid signature. \n")
+
+def get_keys_from_files():
+    #get paths to keys
+    public_key_path = input("Please provide path to your public key\n")
+    private_key_path = input("Please provide path to your private key\n")
+    #get keys
+    with open(str(public_key_path),'r') as reader:
+        file_contents = reader.read()
+    (n,e) = file_contents.split(',')
+    with open(str(private_key_path),'r') as reader:
+        d = reader.read()
+
+    return ((n,e),d)
    
 def user_input_switch(key: int):
     match key:
@@ -47,10 +60,10 @@ def user_input_switch(key: int):
             print("You chose option: " + option2)
             #get message
             message = input("Please type the message to be signed \n")
-            # generate keys
-            ((n,e),d) = user_generate_keys_to_file()
+            # get keys
+            ((n,e),d) = get_keys_from_files()
             #generate signature and save to file
-            user_generate_signature_to_file(message,n,e,d)
+            user_generate_signature_to_file(message,int(n),int(e),int(d))
         case 3:
             #generate signature for message from given file
             print("You chose option: " + option3)  
@@ -59,9 +72,9 @@ def user_input_switch(key: int):
             #read message  
             with open(str(message_path),'r') as reader:
                message = reader.read()
-            #generate keys and signature to files
-            ((n,e),d) = user_generate_keys_to_file()
-            user_generate_signature_to_file(message,n,e,d)
+            #get keys
+            ((n,e),d) = get_keys_from_files()
+            user_generate_signature_to_file(message,int(n),int(e),int(d))
         case 4:
             #verify signature from given file
             print("You chose option: " + option4)
