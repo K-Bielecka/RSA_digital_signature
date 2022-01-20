@@ -1,6 +1,7 @@
 from math import gcd
 from hashlib import sha512
 from random import randrange, getrandbits
+from typing import Union
 
 
 def is_prime(n: int, k: int) -> bool:
@@ -45,30 +46,32 @@ def is_prime(n: int, k: int) -> bool:
     return True
 
 
-def generate_prime_number() -> int:
+def generate_prime_number(prime_size:int) -> int:
     """
     Generates large prime numbers.
 
-    Output: p - a large prime number.
+    Input: prime_size - size of prime number expressed in number of bits
+
+    Output: p - a large prime number
     """
 
     p = 0
 
     # choose randomly a large number until prime is obtained
     while not is_prime(p, 180):
-        p = getrandbits(1024)
+        p = getrandbits(prime_size)
 
     return p
 
 
-def extended_euclidean(a: int, b: int) -> (int, int, int):
+def extended_euclidean(a: int, b: int) -> tuple[int, int, int]:
     """
     Computes greatest common divisor and the coefficients of Bézout's identity.
 
-    Input: a, b - non-negative integers satisfying a >= b.
+    Input: a, b - non-negative integers satisfying a >= b
 
     Output: gcd  - greatest common divisor
-            x, y - the coefficients of Bézout's identity.
+            x, y - the coefficients of Bézout's identity
     """
 
     if b == 0:
@@ -86,17 +89,21 @@ def extended_euclidean(a: int, b: int) -> (int, int, int):
     return (gcd, x, y)
 
 
-def generate_keys():
+def generate_keys(key_size:int = 2048, return_primes: bool = False) -> Union[tuple[int, int, int], tuple[int, int, int, int, int]]:
     """
     Generates RSA public and private keys.
 
+    Input: key_size - size of the key expressed in number of bits (2048 bits by default)
+           return_prime - if set, function returns additionaly tuple of prime numbers p and q used in key generation
+
     Output: (n, e) - public key
-                 d - private key.
+                 d - private key
+            (p, q) - primes used in generation (optional)
     """
 
     # generate two large random primes
-    p = generate_prime_number()
-    q = generate_prime_number()
+    p = generate_prime_number(key_size // 2)
+    q = generate_prime_number(key_size // 2)
 
     n = p * q
     fi = (p - 1) * (q - 1)
@@ -110,11 +117,14 @@ def generate_keys():
     _, x, _ = extended_euclidean(e, fi)
     d = x + fi
 
-    # return public and private keys
-    return ((n, e), d)
+    # return public and private keys (optionally primes p and q)
+    if return_primes:
+        return ((n, e), d, (p, q))
+    else:
+        return ((n, e), d)
 
 
-def generate_signature(m: int, n: int, e: int, d: int) -> int:
+def generate_signature(m, n: int, e: int, d: int) -> int:
     """
     The function generates an RSA digital signature.
 
@@ -135,7 +145,7 @@ def generate_signature(m: int, n: int, e: int, d: int) -> int:
     return s
 
 
-def verify(m: int, n: int, e: int, s: int) -> bool:
+def verify(m, n: int, e: int, s: int) -> bool:
     """
     The function generates verifies the received signature using public key.
 
