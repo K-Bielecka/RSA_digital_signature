@@ -1,13 +1,13 @@
 
 \documentclass{article}
 \usepackage{geometry}
+\usepackage{url} 
 
 \title{ RSA digital signature -- documentation}
 \author{Maciej Marcinkiewicz, Katarzyna Bielecka}
 \newgeometry{lmargin=3.2cm, rmargin=3.2cm, bmargin=2.5cm}
 
 \begin{document}
-
 
 \maketitle
 
@@ -16,11 +16,46 @@
 % short theory
 RSA (Rivest-Shamir-Adleman) is a public key cryptosystem, which was invented in 1977. It is not the newest one but it is still commonly used for securing data transmisson.
 It can be used both for encryption as well as for digital signatures. In general, it makes use of the integer factorization problem, which in number theory is the decompositio of a composite number into a product of smaller integers. In case of these integers being prime it is then called prime factorization.  
+
 \section{Fuctional description of the application}
 % input data formats, outputs etc.
+The RSA cryptosystem application provides the following functionalities:
+public and private key generation, digital signature generation and signature verification.
+Below, algorithms needed for each of those functionalities are described.
+
+\subsection{Keys generation}
+\begin{enumerate}
+    \item Generate two random, large prime numbers \textbf{p} and \textbf{q}
+    \item Compute $ n = p*q $  and $ \phi = (p - 1)*(q - 1) $
+    \item Find \textbf{e}, such that  $ 1 < e < \phi$ and $\gcd(e,\phi) = 1 $
+    \item Using the extended Euclidian algorithm produce a unique \textbf{d}, such that $ 1 < d < \phi $  and $ e*d \equiv  1 $(mod $\phi$)  
+    \item (n,e) is the resulting public key and d is the private key
+\end{enumerate}
+
+\subsection{Signature generation}
+\begin{enumerate}
+    \item Compute $  h = sha512(m) $ where \textbf{h} is the hash of the message \textbf{m}  
+    \item Compute $ s = h^d $ (mod $n$)
+    \item \textbf{s} is the generated signature
+\end{enumerate}
+
+\subsection{Signature verification}
+\begin{enumerate}
+    \item Compute $\tilde{h} = s^e $ (mod $n$)
+    \item Compute $  h = $sha512 $(m) $ where \textbf{h} is the hash of the message \textbf{m}
+    \item If $\tilde{h}$ is equal to h then the signature is valid
+
+\end{enumerate}
+
 \newpage
 \section{Description of designed code structure}
 % 
 \section{Tests}
+
+\section{Bibliography}
+\begin{enumerate}
+\item  Menezes, Alfred; van Oorschot, Paul C.; Vanstone, Scott A. (October 1996). Handbook of Applied Cryptography, Chapter 8
+\item  \url{https://en.wikipedia.org/wiki/RSA_(cryptosystem)}
+\end{enumerate}
 
 \end{document}

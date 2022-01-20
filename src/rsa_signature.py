@@ -148,10 +148,10 @@ def verify(m: int, n: int, e: int, s: int) -> bool:
 
     """
     # decrypt the message
-    m_ = pow(s, e, n)
+    h_ = pow(s, e, n)
 
     # calculate message hash
     h = int(sha512(m.encode("utf-8")).hexdigest(), 16) % 10 ** 8
 
     # compare and return
-    return m_ == h
+    return h_ == h
