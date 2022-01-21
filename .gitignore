@@ -133,6 +133,3 @@ dmypy.json
 
 # LaTeX auxiliary file
 *.synctex.gz 
-
-# images from the documentation
-*.png
