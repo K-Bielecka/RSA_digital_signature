@@ -20,15 +20,15 @@ class TestInternalFunctions(unittest.TestCase):
 
     def test_public_exponent(self):
         """
-        Check if public exponent e and fi are coprime numbers.
+        Check if public exponent e and phi are coprime numbers.
         """
 
-        # generate public expontent for testing and calculate fi
+        # generate public expontent for testing and calculate phi
         (_, e), _, (p, q) = rsa.generate_keys(return_primes=True)
-        fi = (p - 1) * (q - 1)
+        phi = (p - 1) * (q - 1)
 
         # test with gcd() function from standard math module
-        self.assertTrue(gcd(e, fi))
+        self.assertTrue(gcd(e, phi))
 
     def test_extended_euclidean(self):
         """

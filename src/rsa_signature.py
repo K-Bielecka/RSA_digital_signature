@@ -106,16 +106,16 @@ def generate_keys(key_size:int = 2048, return_primes: bool = False) -> Union[tup
     q = generate_prime_number(key_size // 2)
 
     n = p * q
-    fi = (p - 1) * (q - 1)
+    phi = (p - 1) * (q - 1)
 
-    # find such e, that e and fi are coprimes
+    # find such e, that e and phi are coprimes
     e = 0
-    while gcd(e, fi) != 1:
-        e = randrange(1 + 1, fi - 1)
+    while gcd(e, phi) != 1:
+        e = randrange(1 + 1, phi - 1)
 
     # find modular multiplicative inverse
-    _, x, _ = extended_euclidean(e, fi)
-    d = x + fi
+    _, x, _ = extended_euclidean(e, phi)
+    d = x + phi
 
     # return public and private keys (optionally primes p and q)
     if return_primes:
